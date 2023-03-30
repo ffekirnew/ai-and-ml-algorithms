@@ -135,6 +135,9 @@ class Stack:
     def __init__(self):
         self.list = []
 
+    def __str__(self):
+        return f"{self.list}"
+
     def push(self,item):
         "Push 'item' onto the stack"
         self.list.append(item)
@@ -174,9 +177,12 @@ class PriorityQueue:
       in quick retrieval of the lowest-priority item in the queue. This
       data structure allows O(1) access to the lowest-priority item.
     """
-    def  __init__(self):
-        self.heap = []
+    def  __init__(self, heap: list=[]):
+        self.heap = heap
         self.count = 0
+
+    def __str__(self):
+        return f"{self.heap}"
 
     def push(self, item, priority):
         entry = (priority, self.count, item)

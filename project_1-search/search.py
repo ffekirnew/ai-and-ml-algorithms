@@ -18,6 +18,10 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from game import Directions
+
+n, e, w, s = Directions.NORTH, Directions.EAST, Directions.WEST, Directions.SOUTH
+get_direction = lambda x: n if x == "North" else e if x == "East" else w if x == "West" else s
 
 class SearchProblem:
     """
@@ -67,12 +71,10 @@ def tinyMazeSearch(problem):
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
-    from game import Directions
-    s = Directions.SOUTH
-    w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
 
-def depthFirstSearch(problem: SearchProblem):
+
+def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
 
@@ -82,24 +84,76 @@ def depthFirstSearch(problem: SearchProblem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
-    """
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    "*** YOUR CODE HERE ***"
+    """
+    fringe = util.Stack()
+    visited = set()
+
+    fringe.push((problem.getStartState(), []))
+
+    while not fringe.isEmpty():
+        curr_state, curr_path = fringe.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_path
+
+        if curr_state not in visited:
+            visited.add(curr_state)
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                fringe.push((state, curr_path + [get_direction(direction)]))
+
     util.raiseNotDefined()
+
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    search_queue = util.Queue([problem])
+    fringe = util.Queue()
+    visited = set()
+
+    fringe.push((problem.getStartState(), []))
+
+    while not fringe.isEmpty():
+        curr_state, curr_path = fringe.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_path
+
+        if curr_state not in visited:
+            visited.add(curr_state)
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                fringe.push((state, curr_path + [get_direction(direction)]))
 
     util.raiseNotDefined()
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    fringe = util.PriorityQueue()
+    visited = set()
+
+    fringe.push((problem.getStartState(), [], 0), 0)
+
+    while not fringe.isEmpty():
+        curr_state, curr_path, curr_cost = fringe.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_path
+
+        if curr_state not in visited:
+            visited.add(curr_state)
+
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                new_path = curr_path + [get_direction(direction)]
+                new_cost = curr_cost + cost
+
+                fringe.push((state, new_path, new_cost), new_cost)
+
     util.raiseNotDefined()
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -108,11 +162,11 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
 
 # Abbreviations
 # bfs = breadthFirstSearch
