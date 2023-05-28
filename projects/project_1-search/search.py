@@ -166,6 +166,26 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    fringe = util.PriorityQueue()
+    visited = set()
+
+    fringe.push((problem.getStartState(), [], 0), 0)
+
+    while not fringe.isEmpty():
+        curr_state, curr_path, curr_cost = fringe.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_path
+
+        if curr_state not in visited:
+            visited.add(curr_state)
+
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                new_path = curr_path + [get_direction(direction)]
+                new_cost = curr_cost + cost
+
+                fringe.push((state, new_path, new_cost), new_cost)
+
     util.raiseNotDefined()
 
 # Abbreviations
